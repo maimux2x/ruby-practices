@@ -22,7 +22,7 @@ class Calender
     (start_month..end_month).each do |date|
       print format("%#3d", date.day)
       print "\n" if date.saturday?
-      puts nil if date == end_month
+      puts "\n" if date == end_month
     end
   end
 end
