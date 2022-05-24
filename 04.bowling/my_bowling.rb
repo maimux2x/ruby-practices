@@ -12,23 +12,11 @@ scores.each do |s|
   end
 end
 
-frames = []
-shots.each_slice(2) do |s|
-  frames << s
-end
-
+frames = shots.each_slice(2).to_a
 # 10投目にストライクが含まれていた場合の考慮
-frames.each_with_index do |frame, index|
-  frames[index].delete(0) if index >= 9 && frame[0] == 10
-end
-
+tenth_frame = frames[9..].flat_map { |frame| frame[0] == 10 ? [10] : frame }
 # 10投分の配列を作成
-frames.each_index do |index|
-  if index >= 10
-    frames[9].concat frames[index..].flatten
-    frames.slice!(index, index)
-  end
-end
+frames = frames[0..8].push(tenth_frame)
 
 # ポイントの計算
 point = 0
