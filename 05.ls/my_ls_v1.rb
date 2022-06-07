@@ -8,7 +8,7 @@ class LS
       Dir.empty?(Dir.getwd)
     end
 
-    def createt_ary
+    def create_ary
       return true if current_empty?
 
       option = AddOption.new
@@ -31,7 +31,7 @@ class LS
     end
 
     def output_current
-      createt_ary
+      create_ary
       num = @first_ary.map(&:size).max
       @result.each do |ary|
         ary.each do |str|
