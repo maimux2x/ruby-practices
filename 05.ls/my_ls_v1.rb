@@ -7,21 +7,21 @@ class LS
     Dir.empty?(Dir.getwd)
   end
 
-  def prepare_output
-    return if current_empty?
-
+  def check_option
     option = AppOption.new
-    @first_ary =
-      if option.has?('a')
-        Dir.glob('*', File::FNM_DOTMATCH).sort
-      else
-        Dir.glob('*').sort
-      end
+    if option.has?('a')
+      Dir.glob('*', File::FNM_DOTMATCH)
+    else
+      Dir.glob('*')
+    end
+  end
 
+  def prepare_output
+    first_ary = check_option.sort
     n = 3
-    splite_ary = Rational(@first_ary.size, n).ceil
+    splite_ary = Rational(first_ary.size, n).ceil
 
-    second_ary = @first_ary.each_slice(splite_ary).to_a
+    second_ary = first_ary.each_slice(splite_ary).to_a
 
     max_size = second_ary.map(&:size).max
     third_ary = second_ary.map { |ary| ary.values_at(0...max_size) }
@@ -30,8 +30,10 @@ class LS
   end
 
   def output_current
+    return if current_empty?
+
     result = prepare_output
-    num = @first_ary.map(&:size).max
+    num = check_option.map(&:size).max
 
     result.each do |ary|
       ary.each do |str|
