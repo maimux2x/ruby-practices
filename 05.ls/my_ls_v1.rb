@@ -9,15 +9,16 @@ class LS
 
   def check_option
     option = AppOption.new
+    ary = Dir.glob('*')
     if option.has?('a')
-      Dir.glob('*', File::FNM_DOTMATCH)
+      ary + Dir.glob('.*')
     else
-      Dir.glob('*')
+      ary
     end
   end
 
-  def prepare_output
-    first_ary = check_option.sort
+  def prepare_output(check_option_result)
+    first_ary = check_option_result.sort
     n = 3
     splite_ary = Rational(first_ary.size, n).ceil
 
@@ -32,8 +33,9 @@ class LS
   def output_current
     return if current_empty?
 
-    result = prepare_output
-    num = check_option.map(&:size).max
+    check_option_result = check_option
+    result = prepare_output(check_option_result)
+    num = check_option_result.map(&:size).max
 
     result.each do |ary|
       ary.each do |str|
