@@ -9,11 +9,11 @@ class LS
 
   def check_option
     option = AppOption.new
-    ary = Dir.glob('*')
+    Dir.glob(['*', '.*'])
     if option.has?('a')
-      ary + Dir.glob('.*')
+      Dir['*', '.*']
     else
-      ary
+      Dir['*']
     end
   end
 
