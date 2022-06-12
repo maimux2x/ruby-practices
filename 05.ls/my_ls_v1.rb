@@ -9,12 +9,7 @@ class LS
 
   def check_option
     option = AppOption.new
-    Dir.glob(['*', '.*'])
-    if option.has?('a')
-      Dir['*', '.*']
-    else
-      Dir['*']
-    end
+    Dir.glob('*', option.has?('a') ? File::FNM_DOTMATCH : 0)
   end
 
   def prepare_output(check_option_result)
