@@ -4,11 +4,11 @@ require 'optparse'
 
 class AppOption
   def initialize
-    @option = ARGV.getopts('a')
+    @option = ARGV.getopts('ar')
   end
 
   def has?(key)
-    @option.keys == [key] &&
-      @option.values == [true]
+    @option.key?(key) &&
+      @option[key] == true
   end
 end
