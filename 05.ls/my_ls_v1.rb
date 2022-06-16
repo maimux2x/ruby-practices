@@ -9,8 +9,9 @@ class LS
 
   def check_option
     option = AppOption.new
-    check_option_ary = Dir.glob('*', option.has?('a') ? File::FNM_DOTMATCH : 0)
-    option.has?('r') ? check_option_ary.sort.reverse : check_option_ary.sort
+    check_result = Dir.glob('*', option.has?('a') ? File::FNM_DOTMATCH : 0).sort
+    check_result = check_result.reverse if option.has?('r')
+    check_result
   end
 
   def prepare_output(check_option_result)
