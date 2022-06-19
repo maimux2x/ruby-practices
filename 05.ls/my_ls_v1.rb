@@ -9,11 +9,13 @@ class LS
 
   def check_option
     option = AppOption.new
-    Dir.glob('*', option.has?('a') ? File::FNM_DOTMATCH : 0)
+    check_result = Dir.glob('*', option.has?('a') ? File::FNM_DOTMATCH : 0).sort
+    check_result = check_result.reverse if option.has?('r')
+    check_result
   end
 
   def prepare_output(check_option_result)
-    first_ary = check_option_result.sort
+    first_ary = check_option_result
     n = 3
     splite_ary = Rational(first_ary.size, n).ceil
 
