@@ -8,16 +8,15 @@ class LS
     Dir.empty?(Dir.getwd)
   end
 
-  def check_option
-    @option = AppOption.new
-    check_result = Dir.glob('*', @option.has?('a') ? File::FNM_DOTMATCH : 0).sort
-    check_result = check_result.reverse if @option.has?('r')
-    check_result
+  def create_file_name_ary(option)
+    file_name_ary = Dir.glob('*', option.has?('a') ? File::FNM_DOTMATCH : 0).sort
+    file_name_ary = file_name_ary.reverse if option.has?('r')
+    file_name_ary
   end
 
   # オプションなし、aオプション、rオプションの出力情報
-  def prepare_output_name(check_option_result)
-    first_ary = check_option_result
+  def prepare_output_file_name(check_option_results)
+    first_ary = check_option_results
     n = 3
     splite_ary = Rational(first_ary.size, n).ceil
 
@@ -30,37 +29,30 @@ class LS
   end
 
   # lオプションの出力情報
-  def create_current_desc(current_ary)
-    desc_matelial = current_ary
+  def create_file_desc(file_names)
+    desc_materials = file_names
 
-    current_desc = []
-    desc_matelial.each do |desc|
-      current_desc.push File::Stat.new(desc.to_s)
-    end
-    current_desc
+    desc_materials.map { |desc| File::Stat.new(desc.to_s) }
   end
 
-  def output_current_desc
-    raw_current_ary = check_option
-    desc_result = create_current_desc(raw_current_ary)
+  def output_file_desc(option)
+    file_names = create_file_name_ary(option)
+    desc_results = create_file_desc(file_names)
 
-    total_block = desc_result.map(&:blocks)
-    puts "total #{total_block.sum}"
+    total_blocks = desc_results.map(&:blocks)
+    puts "total #{total_blocks.sum}"
 
-    desc_result.each_with_index do |desc, index|
+    desc_results.each_with_index do |desc, index|
       convert_file_type(desc.ftype)
       convert_permission(desc.mode.to_s(8))
-      print desc.nlink,
-            '  ',
-            Etc.getpwuid(desc.uid).name,
-            '  ',
-            Etc.getgrgid(desc.gid).name,
-            '  ',
-            desc.size.to_s.rjust(5),
-            '  ',
-            desc.mtime.strftime('%_m %_d %_R'),
-            '  ',
-            raw_current_ary[index]
+      print [
+        desc.nlink,
+        Etc.getpwuid(desc.uid).name,
+        Etc.getgrgid(desc.gid).name,
+        desc.size.to_s.rjust(5),
+        desc.mtime.strftime('%_m %_d %_R'),
+        file_names[index]
+      ].join('  ')
       puts "\n"
     end
   end
@@ -69,15 +61,16 @@ class LS
   def output_current
     return if current_empty?
 
-    check_option_result = check_option
-
-    if @option.has?('l') #オプションの複数指定は次回対応
-      output_current_desc
+    option = AppOption.new
+    
+    if option.has?('l') #オプション複数指定は次回対応
+      output_file_desc(option)
     else
-      result = prepare_output_name(check_option_result)
-      num = check_option_result.map(&:size).max
+      check_option_results = create_file_name_ary(option)
+      results = prepare_output_file_name(check_option_results)
+      num = check_option_results.map(&:size).max
 
-      result.each do |ary|
+      results.each do |ary|
         ary.each do |str|
           print str&.ljust(num + 5)
         end
@@ -89,7 +82,7 @@ class LS
   private
 
   def convert_file_type(type)
-    file_type = {
+    file_types = {
       'fifo' => 'p',
       'characterSpecial' => 'c',
       'directory' => 'd',
@@ -99,13 +92,13 @@ class LS
       'socket' => 's'
     }
 
-    file_type.each do |key, value|
+    file_types.each do |key, value|
       print value if type == key
     end
   end
 
   def convert_permission(mode)
-    permission = {
+    permissions = {
       'rwx' => '7',
       'rw-' => '6',
       'r-x' => '5',
@@ -116,14 +109,14 @@ class LS
       '---' => '0'
     }
 
-    last_num = mode.slice(-1)
-    last_two_num = mode.slice(-2)
-    last_three_num = mode.slice(-3)
+    last_nums = mode.slice(-1)
+    last_two_nums = mode.slice(-2)
+    last_three_nums = mode.slice(-3)
 
-    permission.each do |key, value|
-      print key if value == last_three_num
-      print key if value == last_two_num
-      print key.ljust(5) if value == last_num
+    permissions.each do |key, value|
+      print key if value == last_three_nums
+      print key if value == last_two_nums
+      print key.ljust(5) if value == last_nums
     end
   end
 end
