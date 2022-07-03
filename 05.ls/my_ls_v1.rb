@@ -28,11 +28,9 @@ class LS
 
   # オプションなし、aオプション、rオプションの出力情報
   def prepare_output_file_names(file_names)
-    first_file_names = file_names
-    n = 3
-    splite_num = Rational(first_file_names.size, n).ceil
+    splite_num = Rational(file_names.size, 3).ceil
 
-    second_file_names = first_file_names.each_slice(splite_num).to_a
+    second_file_names = file_names.each_slice(splite_num).to_a
 
     max_size = second_file_names.map(&:size).max
     third_file_names = second_file_names.map { |name| name.values_at(0...max_size) }
@@ -62,9 +60,8 @@ class LS
     desc_results = get_file_desc(file_names)
     only_file_names = file_names.map { |file| file.gsub("#{params}/", '') }
 
-    total_blocks = desc_results.map(&:blocks)
-    sum = total_blocks.sum
-    puts "total #{sum}" if desc_results.size > 1
+    total_blocks = desc_results.map(&:blocks).sum
+    puts "total #{total_blocks}" if desc_results.size > 1
 
     desc_results.each_with_index do |desc, index|
       convert_file_type(desc.ftype.to_sym)
