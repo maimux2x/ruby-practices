@@ -4,7 +4,13 @@ require 'optparse'
 
 class AppOption
   def initialize
-    @option = ARGV.getopts('arl')
+    @option = {}
+    opt = OptionParser.new
+    opt.on('-a') { |v| v }
+    opt.on('-r') { |v| v }
+    opt.on('-l') { |v| v }
+
+    opt.parse!(ARGV, into: @option)
   end
 
   def has?(key)
