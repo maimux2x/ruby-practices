@@ -19,6 +19,6 @@ class AppOption
   end
 
   def not_has?
-    @option.empty?
+    @option = { l: true, w: true, c: true } if @option.empty?
   end
 end
