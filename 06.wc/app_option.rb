@@ -11,14 +11,11 @@ class AppOption
     opt.on('-c') { |v| v }
 
     opt.parse!(ARGV, into: @option)
+    @option = { l: true, w: true, c: true } if @option.empty?
   end
 
   def has?(key)
     @option.key?(key) &&
       @option[key] == true
-  end
-
-  def not_has?
-    @option = { l: true, w: true, c: true } if @option.empty?
   end
 end

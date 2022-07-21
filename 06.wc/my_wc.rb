@@ -4,38 +4,36 @@ require_relative 'app_option'
 
 class WC
   def output_wc(params, option, stdin_tty)
-    wc_items = prepare_build_wc(params, stdin_tty)
+    return output_stdin_wc(params, option) unless stdin_tty
 
-    if stdin_tty
-      wc_items.each do |item|
-        output_results(item, option)
-      end
-
-      total = calc_total(wc_items)
-      if params.length > 1
-        output_results(total, option)
-        print "total\n"
-      end
-    else
-      wc_items.delete(:file)
-      output_results(wc_items, option)
-      puts "\n"
+    wc_items = prepare_build_wc(params)
+    wc_items.each do |item|
+      output_results(item, option)
     end
+
+    return unless params.length > 1
+
+    total = calc_total(wc_items)
+    output_results(total, option)
+    print "total\n"
   end
 
-  def prepare_build_wc(params, stdin_tty)
-    if stdin_tty
-      params.map do |param|
-        if File.exist?(param)
-          wc_parts = File.read(param)
-          build_wc(wc_parts, param)
-        else
-          param
-        end
+  def output_stdin_wc(params, option)
+    wc_items = build_wc(params.join(' '), params)
+
+    wc_items.delete(:file)
+    output_results(wc_items, option)
+    puts "\n"
+  end
+
+  def prepare_build_wc(params)
+    params.map do |param|
+      if File.exist?(param)
+        wc_parts = File.read(param)
+        build_wc(wc_parts, param)
+      else
+        param
       end
-    else
-      wc_parts = params.join(' ')
-      build_wc(wc_parts, params)
     end
   end
 
@@ -79,7 +77,6 @@ class WC
       byte_size = '%<byte_size_total>8s '
     end
 
-    option.not_has?
     printf(lines, result) if option.has?(:l)
     printf(words, result) if option.has?(:w)
     printf(byte_size, result) if option.has?(:c)
