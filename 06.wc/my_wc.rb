@@ -28,12 +28,11 @@ class WC
 
   def prepare_build_wc(params)
     params.map do |param|
-      if File.exist?(param)
-        wc_parts = File.read(param)
-        build_wc(wc_parts, param)
-      else
-        param
-      end
+      next param unless File.exist?(param)
+      next param if File.ftype(param) == 'directory'
+
+      wc_parts = File.read(param)
+      build_wc(wc_parts, param)
     end
   end
 
@@ -61,6 +60,8 @@ class WC
   def output_results(result, option)
     if result.instance_of?(Hash)
       print_item(result, option)
+    elsif File.exist?(result)
+      puts "wc: #{result}: read: Is a directory"
     else
       puts "wc: #{result}: open: No such file or directory"
     end
