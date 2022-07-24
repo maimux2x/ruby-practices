@@ -3,9 +3,7 @@
 require_relative 'app_option'
 
 class WC
-  def output_wc(params, option, stdin_tty)
-    return output_stdin_wc(params, option) unless stdin_tty
-
+  def output_wc(params, option)
     wc_items = prepare_build_wc(params)
     wc_items.each do |item|
       output_results(item, option)
@@ -91,4 +89,5 @@ params = stdin_tty ? ARGV : $stdin.readlines
 option = AppOption.new
 
 wc = WC.new
-wc.output_wc(params, option, stdin_tty)
+
+wc.send(stdin_tty ? :output_wc : :output_stdin_wc, params, option)
