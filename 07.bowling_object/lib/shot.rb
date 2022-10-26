@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
 class Shot
-  def initialize(shot)
-    @shot = shot
+  def initialize(pin)
+    @pin = pin
   end
 
-  def shot_to_integer
-    return 10 if @shot == 'X'
+  def pin_to_integer
+    return 10 if @pin == 'X'
 
-    @shot.to_i
+    @pin.to_i
   end
 end
