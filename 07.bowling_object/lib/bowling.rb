@@ -2,7 +2,8 @@
 
 require_relative 'game'
 
-game_score = ARGV[0]
+raw_record = ARGV[0]
+game_record = raw_record.split(',')
 game = Game.new
 
-puts game.output_point(game_score)
+puts game.output_score(game_record)
