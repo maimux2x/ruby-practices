@@ -5,7 +5,7 @@ class Shot
     @pin = pin
   end
 
-  def pin_to_integer
+  def pin
     return 10 if @pin == 'X'
 
     @pin.to_i
