@@ -3,7 +3,7 @@
 class Frame
   attr_reader :first_shot, :second_shot
 
-  def initialize(index, first_shot, second_shot, third_shot = '0')
+  def initialize(index, first_shot, second_shot, third_shot)
     @index = index
     @first_shot = Shot.new(first_shot).pin
     @second_shot = Shot.new(second_shot).pin
@@ -11,25 +11,31 @@ class Frame
   end
 
   def score(next_frame, another_frame)
-    if tenth_frame_or_sum_is_not_ten?
+    if tenth_frame?
       @first_shot + @second_shot + @third_shot
+    elsif strike?
+      return 10 + 10 + another_frame.first_shot if continuous_strike?(next_frame)
+
+      10 + next_frame.first_shot + next_frame.second_shot
     elsif spare?
       10 + next_frame.first_shot
-    elsif continuous_strike?(next_frame)
-      10 + 10 + another_frame.first_shot
     else
-      10 + next_frame.first_shot + next_frame.second_shot
+      @first_shot + @second_shot
     end
   end
 
   private
 
-  def tenth_frame_or_sum_is_not_ten?
-    @index >= 9 || @first_shot + @second_shot != 10
+  def tenth_frame?
+    @index >= 9
   end
 
   def spare?
-    @first_shot != 10
+    !strike? && @first_shot + @second_shot == 10
+  end
+
+  def strike?
+    @first_shot == 10
   end
 
   def continuous_strike?(next_frame)
