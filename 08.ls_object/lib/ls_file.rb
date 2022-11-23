@@ -1,21 +1,21 @@
 # frozen_string_literal: true
 
 class LsFile
-  attr_accessor :formatter, :params, :file, :file_names
+  attr_reader :formatter, :file, :file_names
 
-  def initialize(option, params, formatter)
+  def initialize(option, file, formatter)
     @formatter = formatter
-    @params = params
+    @file = file
 
     option_a = option.has?(:a) ? File::FNM_DOTMATCH : 0
 
     @file_names =
-      if File.ftype(params) == 'file'
-        params.split
+      if File.file?(file)
+        file.split
       elsif option.has?(:l)
-        Dir.glob("#{params}/*", option_a).sort
+        Dir.glob("#{file}/*", option_a).sort
       else
-        Dir.glob('*', option_a, base: params).sort
+        Dir.glob('*', option_a, base: file).sort
       end
 
     @file_names = file_names.reverse if option.has?(:r)

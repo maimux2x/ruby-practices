@@ -1,23 +1,19 @@
 # frozen_string_literal: true
 
-require_relative '../lib/ls_option'
+require_relative 'ls_option'
 require_relative 'ls_long_formatter'
-require_relative '../lib/ls_short_formatter'
-require_relative '../lib/ls_file'
-
+require_relative 'ls_short_formatter'
+require_relative 'ls_file'
+require 'debug'
 option = LsOption.new
-params = ARGV[0] || '.'
+file = ARGV[0] || '.'
 
-if !File.exist?(params)
-  puts "#{params}: No such file or directory"
-elsif Dir.empty?(params || Dir.getwd)
-  puts ''
+if !File.exist?(file)
+  puts "#{file}: No such file or directory"
+elsif Dir.empty?(file || Dir.getwd)
+  nil
 else
-  ls =
-    if option.has?(:l)
-      LsFile.new(option, params, LsLongFormatter.new)
-    else
-      LsFile.new(option, params, LsShortFormatter.new)
-    end
+  formatter = option.has?(:l) ? LsLongFormatter.new : LsShortFormatter.new
+  ls = LsFile.new(option, file, formatter)
   ls.output_ls
 end

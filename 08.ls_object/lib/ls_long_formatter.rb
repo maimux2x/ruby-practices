@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
 require 'etc'
-require_relative '../lib/ls_formatter'
+require_relative 'ls_formatter'
 
-class LsLongFormatter < LsFormatter
+class LsLongFormatter
   def output_ls(file)
     desc_results = get_file_desc(file.file_names)
-    only_file_names = file.file_names.map { |f| f.gsub("#{file.params}/", '') }
+    only_file_names = file.file_names.map { |f| f.gsub("#{file.file}/", '') }
 
     total_blocks = desc_results.map(&:blocks).sum
     puts "total #{total_blocks}" if desc_results.size > 1

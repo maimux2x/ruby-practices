@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require_relative '../lib/ls_formatter'
+require_relative 'ls_formatter'
 
-class LsShortFormatter < LsFormatter
+class LsShortFormatter
   def output_ls(file)
     results = prepare_output_file_names(file.file_names)
     num = file.file_names.map(&:size).max
