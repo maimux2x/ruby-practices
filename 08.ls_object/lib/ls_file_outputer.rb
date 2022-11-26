@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class LsFile
+class LsFileOutputer
   attr_reader :formatter, :file, :file_names
 
   def initialize(option, file, formatter)

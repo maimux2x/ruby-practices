@@ -3,7 +3,7 @@
 require_relative 'ls_option'
 require_relative 'ls_long_formatter'
 require_relative 'ls_short_formatter'
-require_relative 'ls_file'
+require_relative 'ls_file_outputer'
 
 option = LsOption.new
 file = ARGV[0] || '.'
@@ -14,6 +14,6 @@ elsif Dir.empty?(file || Dir.getwd)
   nil
 else
   formatter = option.has?(:l) ? LsLongFormatter.new : LsShortFormatter.new
-  ls = LsFile.new(option, file, formatter)
+  ls = LsFileOutputer.new(option, file, formatter)
   ls.output_ls
 end
