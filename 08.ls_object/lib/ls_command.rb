@@ -4,7 +4,7 @@ require_relative 'ls_option'
 require_relative 'ls_long_formatter'
 require_relative 'ls_short_formatter'
 require_relative 'ls_file'
-require 'debug'
+
 option = LsOption.new
 file = ARGV[0] || '.'
 

@@ -22,6 +22,6 @@ class LsFile
   end
 
   def output_ls
-    @formatter.output_ls(self)
+    puts @formatter.output_ls(self)
   end
 end

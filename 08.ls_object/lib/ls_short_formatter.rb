@@ -1,31 +1,28 @@
 # frozen_string_literal: true
 
-require_relative 'ls_formatter'
-
 class LsShortFormatter
-  def output_ls(file)
-    results = prepare_output_file_names(file.file_names)
-    num = file.file_names.map(&:size).max
+  def output_ls(ls_params)
+    sorted_files = prepare_output_file_names(ls_params.file_names)
+    most_long_file_name = ls_params.file_names.map(&:size).max
 
-    results.each do |ary|
-      ary.each do |name|
+    sorted_files.map do |file|
+      file.map do |name|
         adjustment_not_ascii = name&.chars&.count { |str| !str.ascii_only? }
-        print name&.ljust(num - adjustment_not_ascii + 5)
-      end
-      puts "\n"
+        name&.ljust(most_long_file_name - adjustment_not_ascii + 5)
+      end.join
     end
   end
 
   private
 
-  def prepare_output_file_names(file)
-    splite_num = Rational(file.size, 3).ceil
+  def prepare_output_file_names(files)
+    split_num = Rational(files.size, 3).ceil
 
-    second_file_names = file.each_slice(splite_num).to_a
+    dividing_files_to_three_array = files.each_slice(split_num).to_a
 
-    max_size = second_file_names.map(&:size).max
-    third_file_names = second_file_names.map { |name| name.values_at(0...max_size) }
+    max_size = dividing_files_to_three_array.map(&:size).max
+    before_formatting_files_array = dividing_files_to_three_array.map { |name| name.values_at(0...max_size) }
 
-    third_file_names.transpose
+    before_formatting_files_array.transpose
   end
 end
