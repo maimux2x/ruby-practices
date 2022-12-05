@@ -1,19 +1,27 @@
 # frozen_string_literal: true
 
-require_relative 'ls_option'
+require_relative 'ls_params'
 require_relative 'ls_long_formatter'
 require_relative 'ls_short_formatter'
-require_relative 'ls_file_outputer'
+require_relative 'ls_file_outputter'
+require 'debug'
+ls_params = LsParams.new(ARGV)
 
-option = LsOption.new
-file = ARGV[0] || '.'
+def run(ls_params)
+  option = ls_params.option
+  path = ls_params.path
 
-if !File.exist?(file)
-  puts "#{file}: No such file or directory"
-elsif Dir.empty?(file || Dir.getwd)
-  nil
-else
-  formatter = option.has?(:l) ? LsLongFormatter.new : LsShortFormatter.new
-  ls = LsFileOutputer.new(option, file, formatter)
-  ls.output_ls
+  if !File.exist?(path)
+    puts "#{path}: No such file or directory"
+  elsif Dir.empty?(path)
+    nil
+  else
+    formatter = option['l'] ? LsLongFormatter.new : LsShortFormatter.new
+    file_names = ls_params.glob_file_names
+
+    ls_file_outputter = LsFileOutputter.new(file_names, formatter)
+    ls_file_outputter.output
+  end
 end
+
+run(ls_params)

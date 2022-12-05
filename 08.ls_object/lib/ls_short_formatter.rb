@@ -1,28 +1,30 @@
 # frozen_string_literal: true
 
 class LsShortFormatter
-  def output_ls(ls_params)
-    sorted_files = prepare_output_file_names(ls_params.file_names)
-    most_long_file_name = ls_params.file_names.map(&:size).max
+  def format(ls_file_outputter)
+    nested_file_names = transpose_file_names(ls_file_outputter.file_names)
+    most_longest_file_name = ls_file_outputter.file_names.map(&:size).max
 
-    sorted_files.map do |file|
-      file.map do |name|
-        adjustment_not_ascii = name&.chars&.count { |str| !str.ascii_only? }
-        name&.ljust(most_long_file_name - adjustment_not_ascii + 5)
+    nested_file_names.map do |row_files|
+      row_files.map do |file_name|
+        adjustment_not_ascii = file_name&.chars&.count { |str| !str.ascii_only? }
+        file_name&.ljust(most_longest_file_name - adjustment_not_ascii + 5)
       end.join
     end
   end
 
   private
 
-  def prepare_output_file_names(files)
-    split_num = Rational(files.size, 3).ceil
+  def transpose_file_names(files)
+    row_count = Rational(files.size, 3).ceil
 
-    dividing_files_to_three_array = files.each_slice(split_num).to_a
+    nested_file_names = files.each_slice(row_count).to_a
 
-    max_size = dividing_files_to_three_array.map(&:size).max
-    before_formatting_files_array = dividing_files_to_three_array.map { |name| name.values_at(0...max_size) }
+    max_size = nested_file_names.map(&:size).max
 
-    before_formatting_files_array.transpose
+    # transposeする都合上、要素数の合わない配列の要素数が合うようにnilを埋めている
+    nested_file_names = nested_file_names.map { |file_names| file_names.values_at(0...max_size) }
+
+    nested_file_names.transpose
   end
 end

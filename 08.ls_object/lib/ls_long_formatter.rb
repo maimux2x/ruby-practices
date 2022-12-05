@@ -3,30 +3,32 @@
 require 'etc'
 
 class LsLongFormatter
-  def output_ls(file)
-    desc_results = get_file_desc(file.file_names)
-    separating_file_names = file.file_names.map { |f| f.gsub("#{file.file}/", '') }
+  def format(ls_file_outputter)
+    long_format_data = get_long_format_data(ls_file_outputter.file_names)
+    separating_file_names = ls_file_outputter.file_names.map { |f| File.basename(f) }
 
-    total_blocks = desc_results.map(&:blocks).sum
-    puts "total #{total_blocks}" if desc_results.size > 1
+    total_blocks = long_format_data.map(&:blocks).sum
+    total = "total #{total_blocks}" if long_format_data.size > 1
 
-    desc_results.map.with_index do |desc, index|
-      file_type = convert_file_type(desc.ftype)
-      permisson = convert_permission(desc.mode.to_s(8))
-      link = desc.nlink.to_s.rjust(2)
-      user_name = Etc.getpwuid(desc.uid).name
-      authority = Etc.getgrgid(desc.gid).name
-      file_size = desc.size.to_s.rjust(5)
-      datetime = desc.mtime.strftime('%_m %_d %_R')
-      file_name = separating_file_names[index]
+    format_result =
+      long_format_data.map.with_index do |data, index|
+        file_type = convert_file_type(data.ftype)
+        permisson = convert_permission(data.mode.to_s(8))
+        link = data.nlink.to_s.rjust(2)
+        user_name = Etc.getpwuid(data.uid).name
+        authority = Etc.getgrgid(data.gid).name
+        file_size = data.size.to_s.rjust(5)
+        datetime = data.mtime.strftime('%_m %_d %_R')
+        file_name = separating_file_names[index]
 
-      "#{file_type[0]}#{permisson}  #{link}  #{user_name}  #{authority}  #{file_size}  #{datetime}  #{file_name}"
-    end
+        "#{file_type}#{permisson}  #{link}  #{user_name}  #{authority}  #{file_size}  #{datetime}  #{file_name}"
+      end
+    [total, format_result].join("\n")
   end
 
   private
 
-  def get_file_desc(file_names)
+  def get_long_format_data(file_names)
     file_names.map { |file_name| File::Stat.new(File.expand_path(file_name).to_s) }
   end
 
@@ -41,7 +43,8 @@ class LsLongFormatter
       'socket' => 's'
     }
 
-    file_types.filter { |key, _| key == type }.map { |_, value| value }
+    result_file_type = file_types.filter { |file_type, _| file_type == type }.map { |_, convert_value| convert_value }
+    result_file_type[0]
   end
 
   def convert_permission(mode)
