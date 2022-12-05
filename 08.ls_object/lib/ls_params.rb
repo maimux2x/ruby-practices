@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'optparse'
-require 'debug'
+
 class LsParams
   attr_reader :option, :path
 

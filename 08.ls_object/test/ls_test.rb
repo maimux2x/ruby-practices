@@ -8,8 +8,8 @@ require_relative '../lib/ls_file_outputter'
 
 class LsFileOutputterTest < Minitest::Test
   def test_output_ls_no_option
-    option = LsOption.new
-    result = LsFileOutputter.new(option, 'dummy', LsShortFormatter.new)
+    file_names = ['blank', 'dummy.md', 'example.md', 'memo.txt', 'test.html', 'test.txt', 'あいう.md', 'テスト.md']
+    result = LsFileOutputter.new(file_names, LsShortFormatter.new)
     expected = <<~TEXT
       blank          memo.txt       あいう.md
       dummy.md       test.html      テスト.md
@@ -20,10 +20,8 @@ class LsFileOutputterTest < Minitest::Test
   end
 
   def test_output_ls_a_option
-    ARGV << '-a'
-    option = LsOption.new
-
-    result = LsFileOutputter.new(option, 'dummy', LsShortFormatter.new)
+    file_names = ['.', 'blank', 'dummy.md', 'example.md', 'memo.txt', 'test.html', 'test.txt', 'あいう.md', 'テスト.md']
+    result = LsFileOutputter.new(file_names, LsShortFormatter.new)
     expected = <<~TEXT
       .              example.md     test.txt
       blank          memo.txt       あいう.md
@@ -34,10 +32,8 @@ class LsFileOutputterTest < Minitest::Test
   end
 
   def test_output_ls_r_option
-    ARGV << '-r'
-    option = LsOption.new
-
-    result = LsFileOutputter.new(option, 'dummy', LsShortFormatter.new)
+    file_names = ['テスト.md', 'あいう.md', 'test.txt', 'test.html', 'memo.txt', 'example.md', 'dummy.md', 'blank']
+    result = LsFileOutputter.new(file_names, LsShortFormatter.new)
     expected = <<~TEXT
       テスト.md      test.html      dummy.md
       あいう.md      memo.txt       blank
@@ -48,10 +44,8 @@ class LsFileOutputterTest < Minitest::Test
   end
 
   def test_output_ls_l_option
-    ARGV << '-l'
-    option = LsOption.new
-
-    result = LsFileOutputter.new(option, 'dummy', LsShortFormatter.new)
+    file_names = ['dummy/blank', 'dummy/dummy.md', 'dummy/example.md', 'dummy/memo.txt', 'dummy/test.html', 'dummy/test.txt', 'dummy/あいう.md', 'dummy/テスト.md']
+    result = LsFileOutputter.new(file_names, LsShortFormatter.new)
     expected = <<~TEXT
       total 8
       drwxr-xr-x   2  maimux2x  staff     64  11 12 19:50  blank
@@ -68,10 +62,9 @@ class LsFileOutputterTest < Minitest::Test
   end
 
   def test_output_ls_arl_option
-    ARGV << '-arl'
-    option = LsOption.new
-
-    result = LsFileOutputter.new(option, 'dummy', LsShortFormatter.new)
+    file_names = ['dummy/テスト.md', 'dummy/あいう.md', 'dummy/test.txt', 'dummy/test.html', 'dummy/memo.txt', 'dummy/example.md', 'dummy/dummy.md', 'dummy/blank',
+                  'dummy/.']
+    result = LsFileOutputter.new(file_names, LsShortFormatter.new)
     expected = <<~TEXT
       total 8
       -rw-r--r--   1  maimux2x  staff      0  11 10 21:39  テスト.md

@@ -4,7 +4,7 @@ require_relative 'ls_params'
 require_relative 'ls_long_formatter'
 require_relative 'ls_short_formatter'
 require_relative 'ls_file_outputter'
-require 'debug'
+
 ls_params = LsParams.new(ARGV)
 
 def run(ls_params)
@@ -18,7 +18,6 @@ def run(ls_params)
   else
     formatter = option['l'] ? LsLongFormatter.new : LsShortFormatter.new
     file_names = ls_params.glob_file_names
-
     ls_file_outputter = LsFileOutputter.new(file_names, formatter)
     ls_file_outputter.output
   end
