@@ -6,7 +6,7 @@ require_relative '../lib/ls_long_formatter'
 require_relative '../lib/ls_short_formatter'
 require_relative '../lib/ls_file_outputter'
 
-class LsFileOutputterTest < Minitest::Test
+class LsTest < Minitest::Test
   def test_output_ls_no_option
     file_names = ['blank', 'dummy.md', 'example.md', 'memo.txt', 'test.html', 'test.txt', 'あいう.md', 'テスト.md']
     result = LsFileOutputter.new(file_names, LsShortFormatter.new)

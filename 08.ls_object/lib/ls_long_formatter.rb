@@ -3,27 +3,27 @@
 require 'etc'
 
 class LsLongFormatter
-  def format(ls_file_outputter)
-    long_format_data = get_long_format_data(ls_file_outputter.file_names)
-    separating_file_names = ls_file_outputter.file_names.map { |f| File.basename(f) }
+  def format(file_names)
+    long_format_elements = get_long_format_data(file_names)
+    separating_file_names = file_names.map { |f| File.basename(f) }
 
-    total_blocks = long_format_data.map(&:blocks).sum
-    total = "total #{total_blocks}" if long_format_data.size > 1
+    total_blocks = long_format_elements.map(&:blocks).sum
+    total = "total #{total_blocks}" if long_format_elements.size > 1
 
     format_result =
-      long_format_data.map.with_index do |data, index|
-        file_type = convert_file_type(data.ftype)
-        permisson = convert_permission(data.mode.to_s(8))
-        link = data.nlink.to_s.rjust(2)
-        user_name = Etc.getpwuid(data.uid).name
-        authority = Etc.getgrgid(data.gid).name
-        file_size = data.size.to_s.rjust(5)
-        datetime = data.mtime.strftime('%_m %_d %_R')
+      long_format_elements.map.with_index do |element, index|
+        file_type = convert_file_type(element.ftype)
+        permisson = convert_permission(element.mode.to_s(8))
+        link = element.nlink.to_s.rjust(2)
+        user_name = Etc.getpwuid(element.uid).name
+        authority = Etc.getgrgid(element.gid).name
+        file_size = element.size.to_s.rjust(5)
+        datetime = element.mtime.strftime('%_m %_d %_R')
         file_name = separating_file_names[index]
 
         "#{file_type}#{permisson}  #{link}  #{user_name}  #{authority}  #{file_size}  #{datetime}  #{file_name}"
       end
-    [total, format_result].join("\n")
+    [total, format_result]
   end
 
   private
