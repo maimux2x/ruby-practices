@@ -18,7 +18,7 @@ def run(ls_params)
 
     formatter = option['l'] ? LsLongFormatter.new : LsShortFormatter.new
     file_names = ls_params.glob_file_names
-    ls_file_outputter = LsFileOutputter.new(file_names, formatter)
+    ls_file_outputter = LsFileOutputter.new(file_names, option, formatter)
     ls_file_outputter.output
   end
 end

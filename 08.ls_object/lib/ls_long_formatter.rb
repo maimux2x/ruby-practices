@@ -3,7 +3,8 @@
 require 'etc'
 
 class LsLongFormatter
-  def format(file_names)
+  def format(file_names, option)
+    file_names = option['r'] ? file_names.sort.reverse : file_names.sort
     long_format_elements = get_long_format_data(file_names)
     separating_file_names = file_names.map { |f| File.basename(f) }
 
@@ -43,8 +44,7 @@ class LsLongFormatter
       'socket' => 's'
     }
 
-    result_file_type = file_types.filter { |file_type, _| file_type == type }.map { |_, convert_value| convert_value }
-    result_file_type[0]
+    file_types[type]
   end
 
   def convert_permission(mode)
