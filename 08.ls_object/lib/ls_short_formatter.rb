@@ -33,6 +33,6 @@ class LsShortFormatter
         file_names
       end
 
-      nested_file_names.transpose
+    nested_file_names.transpose
   end
 end
