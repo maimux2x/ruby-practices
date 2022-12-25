@@ -13,9 +13,7 @@ def run(ls_params)
 
   if !File.exist?(path)
     puts "#{path}: No such file or directory"
-  else
-    return if Dir.empty?(path)
-
+  elsif !Dir.empty?(path)
     formatter = option['l'] ? LsLongFormatter.new : LsShortFormatter.new
     file_names = ls_params.glob_file_names
     ls_file_outputter = LsFileOutputter.new(file_names, option, formatter)

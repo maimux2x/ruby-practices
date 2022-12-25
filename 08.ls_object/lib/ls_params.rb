@@ -11,12 +11,10 @@ class LsParams
   end
 
   def glob_file_names
-    option_a = @option['a'] ? File::FNM_DOTMATCH : 0
-
     if File.file?(@path)
       [@path]
     else
-      Dir.glob("#{@path}/*", option_a)
+      Dir.glob("#{@path}/*", @option['a'] ? File::FNM_DOTMATCH : 0)
     end
   end
 end
