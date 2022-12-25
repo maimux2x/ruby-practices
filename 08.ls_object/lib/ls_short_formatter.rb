@@ -30,7 +30,6 @@ class LsShortFormatter
         remainder = max_size - file_count
 
         remainder.times { file_names << nil } if remainder.positive?
-        file_names
       end
 
     nested_file_names.transpose
