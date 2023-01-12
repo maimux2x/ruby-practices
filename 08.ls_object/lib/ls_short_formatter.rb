@@ -24,13 +24,13 @@ class LsShortFormatter
     nested_file_names = files.each_slice(row_count).to_a
 
     max_size = nested_file_names.map(&:size).max
-    nested_file_names =
-      nested_file_names.each do |file_names|
-        file_count = file_names.size
-        remainder = max_size - file_count
+    
+    nested_file_names.each do |file_names|
+      file_count = file_names.size
+      remainder = max_size - file_count
 
-        remainder.times { file_names << nil } if remainder.positive?
-      end
+      remainder.times { file_names << nil } if remainder.positive?
+    end
 
     nested_file_names.transpose
   end

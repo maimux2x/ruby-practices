@@ -5,8 +5,6 @@ require_relative 'ls_long_formatter'
 require_relative 'ls_short_formatter'
 require_relative 'ls_file_outputter'
 
-ls_params = LsParams.new(ARGV)
-
 def run(ls_params)
   option = ls_params.option
   path = ls_params.path
@@ -14,11 +12,9 @@ def run(ls_params)
   if !File.exist?(path)
     puts "#{path}: No such file or directory"
   elsif !Dir.empty?(path)
-    formatter = option['l'] ? LsLongFormatter.new : LsShortFormatter.new
-    file_names = ls_params.glob_file_names
-    ls_file_outputter = LsFileOutputter.new(file_names, option, formatter)
+    ls_file_outputter = LsFileOutputter.new(ls_params)
     ls_file_outputter.output
   end
 end
 
-run(ls_params)
+run(LsParams.new(ARGV))

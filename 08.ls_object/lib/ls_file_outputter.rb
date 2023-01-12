@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
 class LsFileOutputter
-  def initialize(file_names, option, formatter)
-    @file_names = file_names
-    @option = option
-    @formatter = formatter
+  def initialize(ls_params)
+    @file_names = ls_params.glob_file_names
+    @option = ls_params.option
+    @formatter = @option['l'] ? LsLongFormatter.new : LsShortFormatter.new
   end
 
   def output
