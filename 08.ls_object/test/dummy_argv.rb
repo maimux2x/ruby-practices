@@ -1,25 +1,18 @@
 # frozen_string_literal: true
+
 require 'optparse'
 
 class DummyArgv
-  def initialize(option)
+  def initialize(option, path = nil)
     @option = option
+    @path = path
   end
 
-  def getopts
-    if @option[:a]
-      { 'a' => true, 'l' => false, 'r' => false }
-    else
-      { 'a' => false, 'l' => false, 'r' => false }
-    end
+  def getopts(*)
+    { 'a' => @option[:a], 'l' => @option[:l], 'r' => @option[:r] }
   end
 
-  def glob_file_names
-    if @option[:a]
-      ['dummy/.', 'dummy/blank', 'dummy/dummy.md', 'dummy/example.md', 'dummy/memo.txt', 'dummy/test.html', 'dummy/test.txt', 'dummy/あいう.md',
-        'dummy/テスト.md']
-    else
-      ['dummy/blank', 'dummy/dummy.md', 'dummy/example.md', 'dummy/memo.txt', 'dummy/test.html', 'dummy/test.txt', 'dummy/あいう.md', 'dummy/テスト.md']
-    end
+  def [](*)
+    @path
   end
 end

@@ -9,83 +9,79 @@ require_relative 'dummy_argv'
 
 class LsTest < Minitest::Test
   def test_output_ls_no_option
-    params = DummyArgv.new(a: false, l: false, r: false)
-    formatter = LsShortFormatter.new
-    
-    expected = <<~TEXT
-      blank                memo.txt             あいう.md            
-      dummy.md             test.html            テスト.md            
-      example.md           test.txt             
-    TEXT
+    argv = DummyArgv.new({ a: false, l: false, r: false }, 'dummy')
+    ls_params = LsParams.new(argv)
+    ls_file_outputter = LsFileOutputter.new(ls_params)
 
-    assert_output(expected) { puts formatter.format(params.glob_file_names, params.getopts) }
+    expected = ["blank                memo.txt             あいう.md            \n",
+                "dummy.md             test.html            テスト.md            \n",
+                "example.md           test.txt             \n"].join
+
+    assert_output(expected) { ls_file_outputter.output }
   end
 
   def test_output_ls_a_option
-    params = DummyArgv.new(a: true, l: false, r: false)
-    formatter = LsShortFormatter.new
+    argv = DummyArgv.new({ a: true, l: false, r: false }, 'dummy')
+    ls_params = LsParams.new(argv)
+    ls_file_outputter = LsFileOutputter.new(ls_params)
+
+    expected = [".                    example.md           test.txt             \n",
+                "blank                memo.txt             あいう.md            \n",
+                "dummy.md             test.html            テスト.md            \n"].join
+
+    assert_output(expected) { ls_file_outputter.output }
+  end
+
+  def test_output_ls_r_option
+    argv = DummyArgv.new({ a: false, l: false, r: true }, 'dummy')
+    ls_params = LsParams.new(argv)
+    ls_file_outputter = LsFileOutputter.new(ls_params)
+
+    expected = ["テスト.md            test.html            dummy.md             \n",
+                "あいう.md            memo.txt             blank                \n",
+                "test.txt             example.md           \n"].join
+
+    assert_output(expected) { ls_file_outputter.output }
+  end
+
+  def test_output_ls_l_option
+    argv = DummyArgv.new({ a: false, l: true, r: false }, 'dummy')
+    ls_params = LsParams.new(argv)
+    ls_file_outputter = LsFileOutputter.new(ls_params)
 
     expected = <<~TEXT
-      .                    example.md           test.txt            
-      blank                memo.txt             あいう.md            
-      dummy.md             test.html            テスト.md            
+      total 16
+      drwxr-xr-x   2  maimux2x  staff     64  11 12 19:50  blank
+      -rw-r--r--   1  maimux2x  staff      0  11 10 21:36  dummy.md
+      -rw-r--r--   1  maimux2x  staff    510  12 17 21:30  example.md
+      -rw-r--r--   1  maimux2x  staff      0  11 10 21:38  memo.txt
+      -rw-r--r--   1  maimux2x  staff      0  12 18 11:03  test.html
+      -rw-r--r--   1  maimux2x  staff      0  11 10 21:39  test.txt
+      -rw-r--r--   1  maimux2x  staff     66  11 12 16:33  あいう.md
+      -rw-r--r--   1  maimux2x  staff      0  11 10 21:39  テスト.md
     TEXT
-    
-    assert_output(expected) { puts formatter.format(params.glob_file_names, params.getopts) }
+
+    assert_output(expected) { ls_file_outputter.output }
   end
-  
-  # def test_output_ls_r_option
-  #   file_names = ['dummy/blank', 'dummy/dummy.md', 'dummy/example.md', 'dummy/memo.txt', 'dummy/test.html', 'dummy/test.txt', 'dummy/あいう.md', 'dummy/テスト.md']
-  #   option = { 'a' => false, 'l' => false, 'r' => true }
-  #   result = LsFileOutputter.new(file_names, option, LsShortFormatter.new)
-   
-  #   result = LsFileOutputter.new([@option={"a"=>false, "l"=>false, "r"=>true}, @path="dummy"])
-  #   expected = <<~TEXT
-  #   テスト.md      test.html      dummy.md
-  #   あいう.md      memo.txt       blank
-  #   test.txt      example.md
-  #   TEXT
-    
-  #   assert_output(expected) { return result.output }
-  # end
 
-  # def test_output_ls_l_option
-  #   file_names = ['dummy/blank', 'dummy/dummy.md', 'dummy/example.md', 'dummy/memo.txt', 'dummy/test.html', 'dummy/test.txt', 'dummy/あいう.md', 'dummy/テスト.md']
-  #   option = { 'a' => false, 'l' => true, 'r' => false }
-  #   result = LsFileOutputter.new(file_names, option, LsShortFormatter.new)
-  #   expected = <<~TEXT
-  #     total 8
-  #     drwxr-xr-x   2  maimux2x  staff     64  11 12 19:50  blank
-  #     -rw-r--r--   1  maimux2x  staff      0  11 10 21:36  dummy.md
-  #     -rw-r--r--   1  maimux2x  staff      0  11 10 21:37  example.md
-  #     -rw-r--r--   1  maimux2x  staff      0  11 10 21:38  memo.txt
-  #     -rw-r--r--   1  maimux2x  staff      0  11 10 21:37  test.html
-  #     -rw-r--r--   1  maimux2x  staff      0  11 10 21:39  test.txt
-  #     -rw-r--r--   1  maimux2x  staff     66  11 12 16:33  あいう.md
-  #     -rw-r--r--   1  maimux2x  staff      0  11 10 21:39  テスト.md
-  #   TEXT
+  def test_output_ls_arl_option
+    argv = DummyArgv.new({ a: true, l: true, r: true }, 'dummy')
+    ls_params = LsParams.new(argv)
+    ls_file_outputter = LsFileOutputter.new(ls_params)
 
-  #   assert_output(expected) { return result.output }
-  # end
+    expected = <<~TEXT
+      total 16
+      -rw-r--r--   1  maimux2x  staff      0  11 10 21:39  テスト.md
+      -rw-r--r--   1  maimux2x  staff     66  11 12 16:33  あいう.md
+      -rw-r--r--   1  maimux2x  staff      0  11 10 21:39  test.txt
+      -rw-r--r--   1  maimux2x  staff      0  12 18 11:03  test.html
+      -rw-r--r--   1  maimux2x  staff      0  11 10 21:38  memo.txt
+      -rw-r--r--   1  maimux2x  staff    510  12 17 21:30  example.md
+      -rw-r--r--   1  maimux2x  staff      0  11 10 21:36  dummy.md
+      drwxr-xr-x   2  maimux2x  staff     64  11 12 19:50  blank
+      drwxr-xr-x  10  maimux2x  staff    320  12 18 11:03  .
+    TEXT
 
-  # def test_output_ls_arl_option
-  #   file_names = ['dummy/テスト.md', 'dummy/あいう.md', 'dummy/test.txt', 'dummy/test.html', 'dummy/memo.txt', 'dummy/example.md', 'dummy/dummy.md', 'dummy/blank',
-  #                 'dummy/.']
-  #   option = { 'a' => true, 'l' => true, 'r' => true }
-  #   result = LsFileOutputter.new(file_names, option, LsShortFormatter.new)
-  #   expected = <<~TEXT
-  #     total 8
-  #     -rw-r--r--   1  maimux2x  staff      0  11 10 21:39  テスト.md
-  #     -rw-r--r--   1  maimux2x  staff     66  11 12 16:33  あいう.md
-  #     -rw-r--r--   1  maimux2x  staff      0  11 10 21:39  test.txt
-  #     -rw-r--r--   1  maimux2x  staff      0  11 10 21:37  test.html
-  #     -rw-r--r--   1  maimux2x  staff      0  11 10 21:38  memo.txt
-  #     -rw-r--r--   1  maimux2x  staff      0  11 10 21:37  example.md
-  #     -rw-r--r--   1  maimux2x  staff      0  11 10 21:36  dummy.md
-  #     drwxr-xr-x   2  maimux2x  staff     64  11 12 19:50  blank
-  #     drwxr-xr-x  10  maimux2x  staff    320  11 25 08:38  .
-  #   TEXT
-
-  #   assert_output(expected) { return result.output }
-  # end
+    assert_output(expected) { ls_file_outputter.output }
+  end
 end
