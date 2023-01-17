@@ -24,7 +24,7 @@ class LsShortFormatter
     nested_file_names = files.each_slice(row_count).to_a
 
     max_size = nested_file_names.map(&:size).max
-    
+
     nested_file_names.each do |file_names|
       file_count = file_names.size
       remainder = max_size - file_count

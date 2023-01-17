@@ -5,7 +5,8 @@ require_relative 'ls_long_formatter'
 require_relative 'ls_short_formatter'
 require_relative 'ls_file_outputter'
 
-def run(ls_params)
+def run
+  ls_params = LsParams.new(ARGV)
   path = ls_params.path
 
   if !File.exist?(path)
@@ -16,4 +17,4 @@ def run(ls_params)
   end
 end
 
-run(LsParams.new(ARGV))
+run
