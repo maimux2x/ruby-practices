@@ -7,11 +7,10 @@ require_relative 'ls_file_outputter'
 
 def run
   ls_params = LsParams.new(ARGV)
-  path = ls_params.path
 
-  if !File.exist?(path)
-    puts "#{path}: No such file or directory"
-  elsif !Dir.empty?(path)
+  if !File.exist?(ls_params.path)
+    puts "#{ls_params.path}: No such file or directory"
+  elsif !Dir.empty?(ls_params.path)
     ls_file_outputter = LsFileOutputter.new(ls_params)
     ls_file_outputter.output
   end
